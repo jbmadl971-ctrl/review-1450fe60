@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Style With Guljana — Product Review</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+  :root{
+    --bone:#F7F3EC; --cream:#EFE7D9; --cream-deep:#E5D9C5; --ink:#1A1714;
+    --graphite:#4A433D; --amber:#C9883A; --amber-deep:#8B5E1A; --gold:#B8995A;
+    --sage:#8A9882; --error:#B05A4F; --line:rgba(26,23,20,0.12); --line-soft:rgba(26,23,20,0.06);
+    --font-display:'Cormorant Garamond',Georgia,serif; --font-body:'Inter',sans-serif;
+  }
+  html{scroll-behavior:smooth;-webkit-text-size-adjust:100%;}
+  body{background:var(--cream);color:var(--ink);font-family:var(--font-body);font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased;padding-bottom:92px;}
+  .wrap{max-width:680px;margin:0 auto;padding:0 18px;}
+  header{background:var(--bone);border-bottom:1px solid var(--line);padding:34px 0 26px;text-align:center;}
+  .brand-script{font-family:var(--font-display);font-style:italic;font-size:1.1rem;color:var(--amber-deep);}
+  header h1{font-family:var(--font-display);font-weight:500;font-size:2.5rem;line-height:1.05;margin:6px 0 14px;}
+  .lede{font-size:1.02rem;color:var(--graphite);max-width:540px;margin:0 auto;}
+  .lede b{color:var(--ink);font-weight:600;}
+  .progress-row{margin:20px auto 0;display:flex;align-items:center;gap:12px;max-width:540px;}
+  .pbar{flex:1;height:7px;background:var(--cream-deep);border-radius:99px;overflow:hidden;}
+  .pfill{height:100%;width:0;background:var(--sage);transition:width .3s;}
+  .pcount{font-family:var(--font-display);font-size:1.05rem;color:var(--graphite);white-space:nowrap;}
+  .card{margin:22px 0;background:var(--bone);border:1px solid var(--line);border-radius:6px;overflow:hidden;transition:border-color .2s,box-shadow .2s;}
+  .card.s-approve{border-color:var(--sage);box-shadow:0 0 0 1px var(--sage);}
+  .card.s-reshoot{border-color:var(--amber);box-shadow:0 0 0 1px var(--amber);}
+  .card.s-skip{opacity:.66;}
+  .card-top{display:flex;align-items:baseline;justify-content:space-between;padding:15px 18px 4px;}
+  .piece-no{font-family:var(--font-display);font-style:italic;font-size:1.2rem;color:var(--amber-deep);}
+  .ref{font-size:.72rem;color:var(--graphite);letter-spacing:.05em;}
+  .photo-wrap{padding:8px 18px 4px;text-align:center;}
+  .photo-wrap img{width:100%;max-width:360px;height:auto;border-radius:5px;border:1px solid var(--line);background:var(--bone);cursor:zoom-in;}
+  .fields{padding:6px 18px 16px;}
+  .fl{display:block;font-family:var(--font-display);font-style:italic;font-size:1.04rem;color:var(--amber-deep);margin:16px 0 7px;}
+  select,input[type=text],textarea{width:100%;padding:12px 14px;font-family:var(--font-body);font-size:.98rem;color:var(--ink);background:var(--cream);border:1px solid var(--line);border-radius:4px;outline:none;}
+  select:focus,input:focus,textarea:focus{border-color:var(--gold);}
+  .custom-name{display:none;margin-top:8px;}.custom-name.show{display:block;}
+  textarea{min-height:74px;resize:vertical;line-height:1.5;}
+  .hint{font-size:.78rem;color:var(--graphite);margin:5px 2px 0;font-style:italic;}
+  .counter{font-size:.74rem;color:var(--graphite);text-align:right;margin-top:5px;}
+  .counter.warn{color:var(--amber-deep);}.counter.over{color:var(--error);}
+  .row2{display:flex;gap:10px;}.row2>div{flex:1;}
+  .cats{display:flex;gap:6px;flex-wrap:wrap;}
+  .cat{font-size:.74rem;font-weight:500;padding:8px 13px;border:1px solid var(--line);background:var(--cream);color:var(--graphite);border-radius:99px;cursor:pointer;transition:all .15s;}
+  .cat.on{background:var(--amber);color:#fff;border-color:var(--amber);}
+  .actions{display:flex;gap:8px;padding:4px 18px 14px;}
+  .act{flex:1;font-weight:600;font-size:.86rem;padding:13px 6px;border:1px solid var(--line);background:var(--cream);color:var(--graphite);border-radius:5px;cursor:pointer;transition:all .15s;-webkit-tap-highlight-color:transparent;}
+  .act:active{transform:scale(.98);}
+  .act.approve.on{background:var(--sage);color:#fff;border-color:var(--sage);}
+  .act.reshoot.on{background:var(--amber);color:#fff;border-color:var(--amber);}
+  .act.skip.on{background:var(--graphite);color:#fff;border-color:var(--graphite);}
+  .note-box{display:none;padding:0 18px 14px;}.note-box.show{display:block;}
+  .reqs{padding:0 18px 14px;font-size:.78rem;color:var(--graphite);}.reqs b{color:var(--amber-deep);}
+  .bar{position:fixed;left:0;right:0;bottom:0;z-index:50;background:rgba(247,243,236,.96);backdrop-filter:blur(8px);border-top:1px solid var(--line);padding:12px 18px calc(12px + env(safe-area-inset-bottom));}
+  .bar .wrap{display:flex;align-items:center;gap:12px;}
+  .bar-status{flex:1;font-size:.86rem;color:var(--graphite);}.bar-status b{color:var(--ink);}
+  .bar-btn{font-family:var(--font-display);font-size:1.05rem;font-weight:600;color:#fff;background:var(--amber);border:none;padding:13px 26px;border-radius:5px;cursor:pointer;white-space:nowrap;}
+  .bar-btn:disabled{opacity:.4;cursor:not-allowed;}
+  .lb{display:none;position:fixed;inset:0;z-index:200;background:rgba(26,23,20,.92);align-items:center;justify-content:center;}
+  .lb.show{display:flex;}.lb img{max-width:94vw;max-height:90vh;object-fit:contain;border-radius:4px;}
+  .lb-close{position:absolute;top:18px;right:24px;font-size:1.9rem;color:#fff;background:none;border:none;cursor:pointer;}
+  .modal{display:none;position:fixed;inset:0;z-index:210;background:rgba(26,23,20,.6);padding:20px;overflow-y:auto;}
+  .modal.show{display:flex;align-items:flex-start;justify-content:center;}
+  .modal-in{max-width:620px;width:100%;margin:auto;background:var(--bone);border-radius:8px;border-top:4px solid var(--amber);padding:26px 22px;}
+  .modal-in h2{font-family:var(--font-display);font-weight:500;font-size:1.9rem;margin-bottom:4px;}
+  .modal-in p{color:var(--graphite);font-size:.92rem;margin-bottom:14px;}
+  .tabs{display:flex;gap:8px;margin-bottom:10px;}
+  .tab{font-size:.8rem;font-weight:600;padding:7px 14px;border:1px solid var(--line);background:var(--cream);border-radius:99px;cursor:pointer;}
+  .tab.on{background:var(--ink);color:#fff;border-color:var(--ink);}
+  .summary{width:100%;min-height:250px;background:var(--cream);border:1px solid var(--line);border-radius:5px;color:var(--ink);font-family:var(--font-body);font-size:.86rem;line-height:1.5;padding:14px;resize:vertical;outline:none;white-space:pre;overflow-x:auto;}
+  .modal-acts{display:flex;gap:10px;margin-top:14px;flex-wrap:wrap;}
+  .ma{flex:1;min-width:150px;font-weight:600;font-size:.88rem;padding:13px;border:1px solid var(--line);background:var(--cream);color:var(--ink);border-radius:5px;cursor:pointer;}
+  .ma.primary{background:var(--amber);border-color:var(--amber);color:#fff;}.ma.copied{background:var(--sage);border-color:var(--sage);color:#fff;}
+  .foot{text-align:center;padding:24px 18px 8px;font-size:.8rem;color:var(--graphite);}
+  .foot .s{font-family:var(--font-display);font-style:italic;color:var(--amber-deep);}
+  @media(max-width:560px){header h1{font-size:2rem;}.row2{flex-direction:column;}}
+</style>
+</head>
+<body>
+
+<header><div class="wrap">
+  <div class="brand-script">Style With Guljana</div>
+  <h1>Your Product Review</h1>
+  <p class="lede">Hi Julie — here's your whole shoot, one piece per card, backgrounds cleaned up. For each one: <b>choose a name (or write your own), make the description sound like you, set the colour and category, and approve it.</b> If a piece is a repeat of one you've already done, just skip it. Tap submit at the end and it builds your list to send back.</p>
+  <div class="progress-row"><div class="pbar"><div class="pfill" id="pfill"></div></div><span class="pcount" id="pcount">0 of 25</span></div>
+</div></header>
+
+<main class="wrap" id="cards"></main>
+
+<div class="bar"><div class="wrap">
+  <span class="bar-status" id="status"><b>0</b> of 25 reviewed</span>
+  <button class="bar-btn" id="submit" disabled>Submit Review</button>
+</div></div>
+
+<div class="lb" id="lb"><button class="lb-close" id="lbClose">&times;</button><img id="lbImg" src="" alt=""></div>
+
+<div class="modal" id="modal"><div class="modal-in">
+  <h2>Your review</h2>
+  <p>This is your product list. Send it to Jon — the readable version, or the spreadsheet version for the store.</p>
+  <div class="tabs"><button class="tab on" id="tabRead">Readable</button><button class="tab" id="tabCsv">Spreadsheet (CSV)</button></div>
+  <textarea class="summary" id="summary" readonly></textarea>
+  <div class="modal-acts"><button class="ma primary" id="emailit">✉ Email my review</button><button class="ma" id="copy">Copy instead</button><button class="ma" id="closeModal">Keep editing</button></div>
+  <p style="font-size:.8rem;color:var(--graphite);margin-top:10px;">Tap <b>Email my review</b> to send it straight to us. If your email looks cut off, use <b>Copy instead</b> and paste it into a text or email.</p>
+</div></div>
+
+<p class="foot">Style With Guljana — Product Review &nbsp;·&nbsp; <span class="s">classic, considered, yours</span></p>
+
+<script>
+const PHOTOS="photo-review-photos/";
+const CATS=["Dresses","Tops","Bottoms","Sets","Outerwear","Accessories"];
+// descriptions written plain + characterful (starters for Julie to make her own — not finished copy)
+const DESC={
+ Dresses:"Cut close and easy to wear. The kind of dress you put on without a second thought and feel right in all evening.",
+ Outerwear:"A long, easy layer to throw over anything. It does the finishing for you.",
+ Sets:"Two pieces made for each other. Wear them together, or break them up — both work.",
+ Tops:"Soft and light, easy on. Good with trousers, good on its own.",
+ Bottoms:"A clean line that moves well and pairs with almost everything you own.",
+ Accessories:"The small thing that pulls a look together."
+};
+// per-piece: [frame, category, colour, [name1,name2,name3]]
+const PIECES=[
+ [1859,"Dresses","Black",["The Soirée","Black Lace","Evening"]],
+ [1860,"Dresses","Black",["The Wrap","Midnight Wrap","The Embrace"]],
+ [1861,"Dresses","Grey",["The Cowl","Dove","Soft Drape"]],
+ [1862,"Dresses","Grey",["Morning Grey","The Gentle Fold","Mist"]],
+ [1863,"Dresses","Grey",["The Sunday","Pewter","The Pleat"]],
+ [1864,"Dresses","Grey",["Soft Focus","The Matinée","Quiet Grey"]],
+ [1865,"Outerwear","Grey",["The Long Coat","The Promenade","The Drape"]],
+ [1866,"Sets","Grey & Black",["The Ensemble","The Two-Piece","The Pairing"]],
+ [1867,"Dresses","Black",["The Little Black","Onyx","The Tie"]],
+ [1868,"Dresses","Black",["The Sheath","Noir","Simply Black"]],
+ [1869,"Dresses","Grey",["The Sash","The Knot","Grey Tie"]],
+ [1870,"Dresses","Olive",["The Olive","Cap Sleeve","Sage Hour"]],
+ [1871,"Dresses","Grey",["The Asymmetry","Silver Line","The Diagonal"]],
+ [1872,"Dresses","Grey",["Pewter","Everyday Grey","The Soft Line"]],
+ [1873,"Dresses","Black",["The Cascade","Evening Fold","Drape Noir"]],
+ [1874,"Dresses","Black",["The Classic","Noir Sleeve","Simply Black"]],
+ [1875,"Outerwear","Grey",["The Tailored","The Jacket","The Layer"]],
+ [1876,"Tops","Grey",["The Tunic","The Long Top","Easy Grey"]],
+ [1877,"Bottoms","Black",["The Column","Noir Skirt","The Long Line"]],
+ [1878,"Bottoms","Grey",["The Trouser","Soft Tailoring","The Easy Pant"]],
+ [1879,"Outerwear","Black Floral",["The Garden Coat","Bloom","Floral Layer"]],
+ [1880,"Outerwear","Black Floral",["In Bloom","The Botanical","Floral Drape"]],
+ [1881,"Bottoms","Black Floral",["The Garden Skirt","Petals","Bloom Below"]],
+ [1882,"Bottoms","Black Floral",["The Trellis","Floral Column","The Bloom Skirt"]],
+ [1883,"Bottoms","Black Floral",["The Garden Trouser","Floral Below","Bloom Pant"]]
+];
+const WRITE_OWN="✎ Write my own…";
+const GARMENTS=PIECES.map(([fr,cat,col,names],i)=>({id:"p"+fr,n:i+1,fr,cat,col,names,desc:DESC[cat]}));
+const KEY="swg_photo_review_v3";
+let state={}; try{state=JSON.parse(localStorage.getItem(KEY)||"{}");}catch(e){state={};}
+const cards=document.getElementById('cards');
+
+GARMENTS.forEach(g=>{
+  const s=state[g.id]||{name:g.names[0],custom:false,desc:g.desc,cat:g.cat,col:g.col,decision:null,note:"",sameAs:null};
+  state[g.id]=s;
+  const card=document.createElement('section'); card.className='card'; card.id='c-'+g.id;
+  const opts=[...g.names,WRITE_OWN].map(nm=>`<option ${nm===s.name||(nm===WRITE_OWN&&s.custom)?'selected':''}>${nm}</option>`).join('');
+  card.innerHTML=`
+    <div class="card-top"><span class="piece-no">Piece ${g.n}</span><span class="ref" id="ref-${g.id}">of 25 · IMG ${g.fr}</span></div>
+    <div class="photo-wrap"><img src="${PHOTOS}IMG_${g.fr}.jpg" alt="Piece ${g.n}" loading="lazy" data-fr="${g.fr}"></div>
+    <div class="fields">
+      <label class="fl">Name this piece</label>
+      <select class="namesel" data-g="${g.id}">${opts}</select>
+      <input type="text" class="custom-name ${s.custom?'show':''}" data-g="${g.id}" placeholder="Type your own name" value="${(s.custom?(s.name||''):'').replace(/"/g,'&quot;')}">
+      <label class="fl">Description</label>
+      <textarea class="descbox" data-g="${g.id}" placeholder="In your words…">${s.desc||''}</textarea>
+      <div class="hint">A starting point — rewrite it so it sounds like you.</div>
+      <div class="counter" id="cnt-${g.id}"></div>
+      <div class="row2">
+        <div><label class="fl">Colour</label><input type="text" class="colbox" data-g="${g.id}" value="${(s.col||'').replace(/"/g,'&quot;')}" placeholder="e.g. Black"></div>
+      </div>
+      <label class="fl">Category</label>
+      <div class="cats">${CATS.map(c=>`<button class="cat ${c===s.cat?'on':''}" data-g="${g.id}" data-c="${c}">${c}</button>`).join('')}</div>
+      <label class="fl">Same style, different colour?</label>
+      <select class="samesel" data-g="${g.id}"></select>
+      <div class="hint" id="ln-${g.id}"></div>
+    </div>
+    <div class="reqs">To approve: pick or write a <b>name</b>. The rest is yours to polish.</div>
+    <div class="actions">
+      <button class="act approve" data-g="${g.id}" data-d="approve">✓ Approve</button>
+      <button class="act reshoot" data-g="${g.id}" data-d="reshoot">⟲ Reshoot</button>
+      <button class="act skip" data-g="${g.id}" data-d="skip">Skip</button>
+    </div>
+    <div class="note-box" id="nb-${g.id}">
+      <label class="fl" style="color:var(--error)">What needs reshooting?</label>
+      <textarea class="notebox" data-g="${g.id}" placeholder="Tell us what's off…">${s.note||''}</textarea>
+    </div>`;
+  cards.appendChild(card); applyDecision(g.id); updateCounter(g.id);
+});
+
+// ---- colourway link: "same style, different colour" ----
+function pieceById(id){return GARMENTS.find(x=>x.id===id);}
+GARMENTS.forEach(g=>{
+  const sel=document.querySelector(`.samesel[data-g="${g.id}"]`);
+  let html='<option value="">— It\'s its own style —</option>';
+  GARMENTS.forEach(o=>{ if(o.id!==g.id) html+=`<option value="${o.id}" ${state[g.id].sameAs===o.id?'selected':''}>Same as Piece ${o.n}</option>`; });
+  sel.innerHTML=html; applyLink(g.id);
+});
+function applyLink(gid){
+  const s=state[gid],note=document.getElementById('ln-'+gid),ref=document.getElementById('ref-'+gid),g=pieceById(gid);
+  if(s.sameAs){const m=pieceById(s.sameAs);
+    note.innerHTML=`↳ Colour variant of <b>Piece ${m.n}</b> — shares that piece's name &amp; description; just set this one's colour.`;
+    ref.textContent='↳ colour of Piece '+m.n+' · IMG '+g.fr;
+  }else{note.innerHTML='If this is a piece you\'ve already named in another colour, point it there — it becomes one product with colour options.';ref.textContent='of 25 · IMG '+g.fr;}
+}
+
+cards.addEventListener('click',e=>{
+  const img=e.target.closest('img[data-fr]');
+  if(img){lbImg.src=PHOTOS+'IMG_'+img.dataset.fr+'.jpg';lb.classList.add('show');return;}
+  const cat=e.target.closest('.cat');
+  if(cat){state[cat.dataset.g].cat=cat.dataset.c;document.querySelectorAll(`.cat[data-g="${cat.dataset.g}"]`).forEach(b=>b.classList.toggle('on',b.dataset.c===cat.dataset.c));save();return;}
+  const act=e.target.closest('.act');
+  if(act){const{g,d}=act.dataset;state[g].decision=(state[g].decision===d)?null:d;applyDecision(g);save();progress();}
+});
+cards.addEventListener('change',e=>{
+  if(e.target.classList.contains('namesel')){
+    const g=e.target.dataset.g,v=e.target.value,ci=document.querySelector(`.custom-name[data-g="${g}"]`);
+    if(v===WRITE_OWN){state[g].custom=true;ci.classList.add('show');ci.focus();state[g].name=ci.value||"";}
+    else{state[g].custom=false;ci.classList.remove('show');state[g].name=v;}
+    save();
+  }
+  if(e.target.classList.contains('samesel')){const g=e.target.dataset.g;state[g].sameAs=e.target.value||null;applyLink(g);save();}
+});
+cards.addEventListener('input',e=>{
+  const t=e.target,g=t.dataset.g;
+  if(t.classList.contains('descbox')){state[g].desc=t.value;updateCounter(g);save();}
+  if(t.classList.contains('custom-name')){state[g].name=t.value;state[g].custom=true;save();}
+  if(t.classList.contains('colbox')){state[g].col=t.value;save();}
+  if(t.classList.contains('notebox')){state[g].note=t.value;save();}
+});
+function applyDecision(g){
+  const s=state[g];
+  document.querySelectorAll(`.act[data-g="${g}"]`).forEach(b=>b.classList.toggle('on',b.dataset.d===s.decision));
+  document.getElementById('nb-'+g).classList.toggle('show',s.decision==='reshoot');
+  const c=document.getElementById('c-'+g);c.classList.remove('s-approve','s-reshoot','s-skip');
+  if(s.decision)c.classList.add('s-'+s.decision);
+}
+function updateCounter(g){const n=(state[g].desc||'').length;const el=document.getElementById('cnt-'+g);el.textContent=n+' characters';el.className='counter'+(n>200?' over':(n>140?' warn':''));}
+function reviewed(){return GARMENTS.filter(g=>state[g.id].decision).length;}
+function progress(){const n=reviewed();document.getElementById('pfill').style.width=(n/25*100)+'%';document.getElementById('pcount').textContent=n+' of 25';document.getElementById('status').innerHTML='<b>'+n+'</b> of 25 reviewed';document.getElementById('submit').disabled=n===0;}
+function save(){localStorage.setItem(KEY,JSON.stringify(state));}
+
+const lb=document.getElementById('lb'),lbImg=document.getElementById('lbImg');
+document.getElementById('lbClose').onclick=()=>lb.classList.remove('show');
+lb.addEventListener('click',e=>{if(e.target===lb)lb.classList.remove('show');});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')lb.classList.remove('show');});
+
+// ---- export: readable + CSV (the product log / SKU seed) ----
+function buildReadable(){
+  const L=["STYLE WITH GULJANA — Julie's product review",""];const lab={approve:"APPROVED",reshoot:"RESHOOT",skip:"skip"};
+  GARMENTS.forEach(g=>{const s=state[g.id];let line=`Piece ${g.n} (IMG ${g.fr}): ${s.decision?lab[s.decision]:'— not reviewed —'}`;
+    if(s.decision){if(s.sameAs)line+=`\n   ↳ colour variant of Piece ${pieceById(rootId(g.id)).n} (shares its name & description)`;
+      if(s.name)line+=`\n   name: ${s.name}`;if(s.col)line+=`\n   colour: ${s.col}`;if(s.cat)line+=`\n   category: ${s.cat}`;
+      if(s.desc)line+=`\n   description: ${s.desc}`;if(s.decision==='reshoot'&&s.note)line+=`\n   reshoot note: ${s.note}`;}L.push(line);});
+  const a=GARMENTS.filter(g=>state[g.id].decision==='approve').length,r=GARMENTS.filter(g=>state[g.id].decision==='reshoot').length,k=GARMENTS.filter(g=>state[g.id].decision==='skip').length;
+  L.push("",`Totals: ${a} approved · ${r} reshoot · ${k} skipped`);return L.join("\n");
+}
+function csvCell(v){v=String(v==null?"":v).replace(/"/g,'""');return /[",\n]/.test(v)?'"'+v+'"':v;}
+const CATCODE={Dresses:"DR",Tops:"TP",Bottoms:"BT",Sets:"ST",Outerwear:"OW",Accessories:"AC"};
+const COLCODE={Black:"BLK",Grey:"GRY",Olive:"OLV",Navy:"NVY","Black Floral":"FLR","Grey & Black":"GBK",Cream:"CRM",White:"WHT",Brown:"BRN",Burgundy:"BUR",Green:"GRN",Blue:"BLU",Red:"RED"};
+function colorCode(c){c=(c||"").trim();if(COLCODE[c])return COLCODE[c];return (c.replace(/[^A-Za-z]/g,'').toUpperCase().slice(0,3))||"XXX";}
+function rootId(gid){let s=state[gid],hops=0;while(s.sameAs&&hops<30){gid=s.sameAs;s=state[gid];hops++;}return gid;}
+function styleNumbers(){const map={};let n=0;
+  GARMENTS.forEach(g=>{if(!state[g.id].sameAs){n++;map[g.id]=String(n).padStart(3,'0');}});
+  GARMENTS.forEach(g=>{if(state[g.id].sameAs)map[g.id]=map[rootId(g.id)]||'???';});return map;}
+function buildCSV(){
+  const sn=styleNumbers();
+  const rows=[["Piece","Photo","Style#","SKU","Name","Colour","Category","Description","SameStyleAs","Status","ReshootNote"]];
+  GARMENTS.forEach(g=>{const s=state[g.id],r=state[rootId(g.id)];
+    const name=s.sameAs?(r.name||""):(s.name||""), desc=s.sameAs?(r.desc||""):(s.desc||""), catName=s.sameAs?(r.cat||""):(s.cat||"");
+    const sku=`SWG-${CATCODE[catName]||"XX"}-${sn[g.id]||"???"}-${colorCode(s.col)}`;
+    const same=s.sameAs?("Piece "+pieceById(rootId(g.id)).n):"";
+    rows.push([g.n,"IMG_"+g.fr,sn[g.id]||"",sku,name,s.col||"",catName,desc,same,s.decision||"",s.note||""]);
+  });
+  return rows.map(r=>r.map(csvCell).join(",")).join("\n");
+}
+const modal=document.getElementById('modal'),summary=document.getElementById('summary');
+let mode="read";
+function render(){summary.value=mode==="read"?buildReadable():buildCSV();summary.style.whiteSpace=mode==="read"?"pre-wrap":"pre";}
+document.getElementById('tabRead').onclick=function(){mode="read";this.classList.add('on');document.getElementById('tabCsv').classList.remove('on');render();};
+document.getElementById('tabCsv').onclick=function(){mode="csv";this.classList.add('on');document.getElementById('tabRead').classList.remove('on');render();};
+document.getElementById('submit').onclick=()=>{render();modal.classList.add('show');};
+document.getElementById('closeModal').onclick=()=>modal.classList.remove('show');
+modal.addEventListener('click',e=>{if(e.target===modal)modal.classList.remove('show');});
+document.getElementById('emailit').onclick=function(){
+  const subj=encodeURIComponent("Julie's Style With Guljana — Product Review");
+  const body=encodeURIComponent(buildReadable());
+  window.location.href="mailto:jon@theconnectorsgroup.org?subject="+subj+"&body="+body;
+};
+document.getElementById('copy').onclick=function(){summary.select();summary.setSelectionRange(0,99999);const done=()=>{this.textContent='Copied ✓';this.classList.add('copied');setTimeout(()=>{this.textContent='Copy to clipboard';this.classList.remove('copied');},1800);};if(navigator.clipboard)navigator.clipboard.writeText(summary.value).then(done,()=>{document.execCommand('copy');done();});else{document.execCommand('copy');done();}};
+progress();
+</script>
+</body>
+</html>
