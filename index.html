@@ -32,8 +32,10 @@
   .card-top{display:flex;align-items:baseline;justify-content:space-between;padding:15px 18px 4px;}
   .piece-no{font-family:var(--font-display);font-style:italic;font-size:1.2rem;color:var(--amber-deep);}
   .ref{font-size:.72rem;color:var(--graphite);letter-spacing:.05em;}
-  .photo-wrap{padding:8px 18px 4px;text-align:center;}
-  .photo-wrap img{width:100%;max-width:360px;height:auto;border-radius:5px;border:1px solid var(--line);background:var(--bone);cursor:zoom-in;}
+  .strip{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;padding:10px 18px 4px;}
+  .shot{text-align:center;}
+  .shot img{width:158px;height:210px;object-fit:cover;border-radius:5px;border:1px solid var(--line);background:var(--bone);cursor:zoom-in;}
+  .shot-lbl{font-size:.68rem;color:var(--graphite);letter-spacing:.1em;text-transform:uppercase;margin-top:5px;}
   .fields{padding:6px 18px 16px;}
   .fl{display:block;font-family:var(--font-display);font-style:italic;font-size:1.04rem;color:var(--amber-deep);margin:16px 0 7px;}
   select,input[type=text],textarea{width:100%;padding:12px 14px;font-family:var(--font-body);font-size:.98rem;color:var(--ink);background:var(--cream);border:1px solid var(--line);border-radius:4px;outline:none;}
@@ -43,7 +45,6 @@
   .hint{font-size:.78rem;color:var(--graphite);margin:5px 2px 0;font-style:italic;}
   .counter{font-size:.74rem;color:var(--graphite);text-align:right;margin-top:5px;}
   .counter.warn{color:var(--amber-deep);}.counter.over{color:var(--error);}
-  .row2{display:flex;gap:10px;}.row2>div{flex:1;}
   .cats{display:flex;gap:6px;flex-wrap:wrap;}
   .cat{font-size:.74rem;font-weight:500;padding:8px 13px;border:1px solid var(--line);background:var(--cream);color:var(--graphite);border-radius:99px;cursor:pointer;transition:all .15s;}
   .cat.on{background:var(--amber);color:#fff;border-color:var(--amber);}
@@ -63,6 +64,8 @@
   .lb{display:none;position:fixed;inset:0;z-index:200;background:rgba(26,23,20,.92);align-items:center;justify-content:center;}
   .lb.show{display:flex;}.lb img{max-width:94vw;max-height:90vh;object-fit:contain;border-radius:4px;}
   .lb-close{position:absolute;top:18px;right:24px;font-size:1.9rem;color:#fff;background:none;border:none;cursor:pointer;}
+  .lb-nav{position:absolute;top:50%;transform:translateY(-50%);font-size:2.4rem;color:rgba(255,255,255,.85);background:none;border:none;cursor:pointer;padding:0 20px;}
+  .lb-prev{left:0;}.lb-next{right:0;}
   .modal{display:none;position:fixed;inset:0;z-index:210;background:rgba(26,23,20,.6);padding:20px;overflow-y:auto;}
   .modal.show{display:flex;align-items:flex-start;justify-content:center;}
   .modal-in{max-width:620px;width:100%;margin:auto;background:var(--bone);border-radius:8px;border-top:4px solid var(--amber);padding:26px 22px;}
@@ -77,7 +80,7 @@
   .ma.primary{background:var(--amber);border-color:var(--amber);color:#fff;}.ma.copied{background:var(--sage);border-color:var(--sage);color:#fff;}
   .foot{text-align:center;padding:24px 18px 8px;font-size:.8rem;color:var(--graphite);}
   .foot .s{font-family:var(--font-display);font-style:italic;color:var(--amber-deep);}
-  @media(max-width:560px){header h1{font-size:2rem;}.row2{flex-direction:column;}}
+  @media(max-width:560px){header h1{font-size:2rem;}}
 </style>
 </head>
 <body>
@@ -85,18 +88,23 @@
 <header><div class="wrap">
   <div class="brand-script">Style With Guljana</div>
   <h1>Your Product Review</h1>
-  <p class="lede">Hi Julie — here's your whole shoot, one piece per card, backgrounds cleaned up. For each one: <b>choose a name (or write your own), make the description sound like you, set the colour and category, and approve it.</b> If a piece is a repeat of one you've already done, just skip it. Tap submit at the end and it builds your list to send back.</p>
-  <div class="progress-row"><div class="pbar"><div class="pfill" id="pfill"></div></div><span class="pcount" id="pcount">0 of 25</span></div>
+  <p class="lede">Hi Julie — here's your line, one piece per card, front and back together where we have both. For each one: <b>choose a name (or write your own), make the description sound like you, set the colour and category, and approve it.</b> Tap a photo to see it larger. Tap submit at the end and it builds your list to send back.</p>
+  <div class="progress-row"><div class="pbar"><div class="pfill" id="pfill"></div></div><span class="pcount" id="pcount">0 of 13</span></div>
 </div></header>
 
 <main class="wrap" id="cards"></main>
 
 <div class="bar"><div class="wrap">
-  <span class="bar-status" id="status"><b>0</b> of 25 reviewed</span>
+  <span class="bar-status" id="status"><b>0</b> of 13 reviewed</span>
   <button class="bar-btn" id="submit" disabled>Submit Review</button>
 </div></div>
 
-<div class="lb" id="lb"><button class="lb-close" id="lbClose">&times;</button><img id="lbImg" src="" alt=""></div>
+<div class="lb" id="lb">
+  <button class="lb-close" id="lbClose">&times;</button>
+  <button class="lb-nav lb-prev" id="lbPrev">&#8249;</button>
+  <img id="lbImg" src="" alt="">
+  <button class="lb-nav lb-next" id="lbNext">&#8250;</button>
+</div>
 
 <div class="modal" id="modal"><div class="modal-in">
   <h2>Your review</h2>
@@ -112,57 +120,39 @@
 <script>
 const PHOTOS="photo-review-photos/";
 const CATS=["Dresses","Tops","Bottoms","Sets","Outerwear","Accessories"];
-// descriptions written plain + characterful (starters for Julie to make her own — not finished copy)
-const DESC={
- Dresses:"Cut close and easy to wear. The kind of dress you put on without a second thought and feel right in all evening.",
- Outerwear:"A long, easy layer to throw over anything. It does the finishing for you.",
- Sets:"Two pieces made for each other. Wear them together, or break them up — both work.",
- Tops:"Soft and light, easy on. Good with trousers, good on its own.",
- Bottoms:"A clean line that moves well and pairs with almost everything you own.",
- Accessories:"The small thing that pulls a look together."
-};
-// per-piece: [frame, category, colour, [name1,name2,name3]]
+// One entry per PIECE. f = image numbers (front first, then back). same = front-image of the master it's a colourway of.
 const PIECES=[
- [1859,"Dresses","Black",["The Soirée","Black Lace","Evening"]],
- [1860,"Dresses","Black",["The Wrap","Midnight Wrap","The Embrace"]],
- [1861,"Dresses","Grey",["The Cowl","Dove","Soft Drape"]],
- [1862,"Dresses","Grey",["Morning Grey","The Gentle Fold","Mist"]],
- [1863,"Dresses","Grey",["The Sunday","Pewter","The Pleat"]],
- [1864,"Dresses","Grey",["Soft Focus","The Matinée","Quiet Grey"]],
- [1865,"Outerwear","Grey",["The Long Coat","The Promenade","The Drape"]],
- [1866,"Sets","Grey & Black",["The Ensemble","The Two-Piece","The Pairing"]],
- [1867,"Dresses","Black",["The Little Black","Onyx","The Tie"]],
- [1868,"Dresses","Black",["The Sheath","Noir","Simply Black"]],
- [1869,"Dresses","Grey",["The Sash","The Knot","Grey Tie"]],
- [1870,"Dresses","Olive",["The Olive","Cap Sleeve","Sage Hour"]],
- [1871,"Dresses","Grey",["The Asymmetry","Silver Line","The Diagonal"]],
- [1872,"Dresses","Grey",["Pewter","Everyday Grey","The Soft Line"]],
- [1873,"Dresses","Black",["The Cascade","Evening Fold","Drape Noir"]],
- [1874,"Dresses","Black",["The Classic","Noir Sleeve","Simply Black"]],
- [1875,"Outerwear","Grey",["The Tailored","The Jacket","The Layer"]],
- [1876,"Tops","Grey",["The Tunic","The Long Top","Easy Grey"]],
- [1877,"Bottoms","Black",["The Column","Noir Skirt","The Long Line"]],
- [1878,"Bottoms","Grey",["The Trouser","Soft Tailoring","The Easy Pant"]],
- [1879,"Outerwear","Black Floral",["The Garden Coat","Bloom","Floral Layer"]],
- [1880,"Outerwear","Black Floral",["In Bloom","The Botanical","Floral Drape"]],
- [1881,"Bottoms","Black Floral",["The Garden Skirt","Petals","Bloom Below"]],
- [1882,"Bottoms","Black Floral",["The Trellis","Floral Column","The Bloom Skirt"]],
- [1883,"Bottoms","Black Floral",["The Garden Trouser","Floral Below","Bloom Pant"]]
+ {f:[1859,1860],cat:"Dresses",col:"Black",names:["The Soirée","Black Lace","Evening"],desc:"There is a quiet drama to this one — long sleeves, a column that skims the figure, and a ribbon of lace cut on the bias across the bodice. It was made for the evening that asks a little more of you: the late dinner, the room you want to be remembered in. Slip it on and you needn't say a word; the lace does the talking."},
+ {f:[1861,1862],cat:"Dresses",col:"Champagne",names:["The Cowl","Dove","Soft Drape"],desc:"A soft champagne that catches the light the way good silk should, falling into a cowl that shifts and drapes as you move. There is nothing stiff about it — it gathers gently at the hip and flatters without the slightest effort. The kind of dress a woman keeps for years and is always glad to find again."},
+ {f:[1863,1864],cat:"Dresses",col:"Black",names:["The Sunday","Pewter","The Pleat"],desc:"Black, with a waist gathered just so and a skirt that moves when you do. It is unfussy in the very best tradition — clean lines, a flattering nip at the middle, nothing that ever shouts. Wear it to the occasions that matter and it will not let you down; this is the quiet workhorse of an elegant closet."},
+ {f:[1865,1866],cat:"Dresses",col:"Grey",names:["The Boardroom","The Tailored","The Meridian"],desc:"Tailored, composed, and cut to mean business — this is the dress for the day you walk in and take the room. The grey is serious without being severe, the line sharp without being stiff. It carries you from the first meeting clear through to the evening: authority, with a little grace to it."},
+ {f:[1867,1868],cat:"Dresses",col:"Black",names:["The Little Black","Onyx","The Tie"],desc:"Every wardrobe deserves one of these, and this is a particularly fine one. Clean through the shoulder, a soft tie to mark the waist, and a length that suits nearly any occasion you could name. It asks for very little and gives a great deal back — the little black dress that does all the thinking for you."},
+ {f:[1869,1870],cat:"Dresses",col:"Taupe",names:["The Sash","The Knot","Soft Taupe"],desc:"Soft, understated, and cut with a sash so you can set the waist exactly where you like it. It is the everyday dress that somehow never looks ordinary — easy enough for daylight, polished enough for dinner. Quietly elegant and endlessly wearable, the sort of thing you reach for again and again, in whichever colour suits the day."},
+ {f:[1871,1872],cat:"Dresses",col:"Blue",names:["The Sash","The Knot","Soft Taupe"],desc:"Soft, understated, and cut with a sash so you can set the waist exactly where you like it. It is the everyday dress that somehow never looks ordinary — easy enough for daylight, polished enough for dinner. Quietly elegant and endlessly wearable, the sort of thing you reach for again and again, in whichever colour suits the day.",same:1869},
+ {f:[1873,1874],cat:"Dresses",col:"Black",names:["The Cascade","Evening Fold","Drape Noir"],desc:"A wrap with real movement — structured across the shoulder, then falling away into a soft cascade. The contrast panel lends it a little architecture while the drape keeps everything feminine and easy. It is confident without trying too hard, the dress that looks considered the very moment you put it on."},
+ {f:[1875,1876],cat:"Outerwear",col:"Grey",names:["The Tailored","The Jacket","The Layer"],desc:"The layer that pulls a whole look together, in a soft tailored grey that goes with everything you own. Throw it over a dress for the evening or a blouse for the day and at once you look finished. Every wardrobe wants one piece that does this quiet, elegant work — let this be yours."},
+ {f:[1877,1878],cat:"Bottoms",col:"Grey",names:["The Trouser","Soft Tailoring","The Easy Pant"],desc:"A beautifully easy trouser with a soft drape through the leg — comfortable enough to live in, refined enough to mean it. It moves with you and never pulls or sags, which is rarer than it sounds. Wear it high with a tucked blouse or loose with a longer top; either way, it reads as quietly expensive."},
+ {f:[1879,1880],cat:"Tops",col:"Black Floral",names:["The Garden Top","Bloom","Floral Top"],desc:"A loose black floral top that drifts and floats as you move, light as anything against the skin. The print is romantic without being girlish — small blooms scattered over a dark ground, the way the loveliest vintage prints were always done. Wear it with trousers or a slim skirt and let the top do the romancing."},
+ {f:[1881,1882],cat:"Bottoms",col:"Black Floral",names:["The Garden Skirt","Petals","Bloom Below"],desc:"A floral on a long, fluid line that moves like water as you walk. The print is soft and a touch romantic — flowers on a dark ground, never loud, always pretty. It carries the day beautifully and turns just as easily to evening, a piece with a little old-world romance about it."},
+ {f:[1883],cat:"Bottoms",col:"Unknown",names:["The Garden Skirt","Petals","Bloom Below"],desc:"A floral on a long, fluid line that moves like water as you walk. The print is soft and a touch romantic — flowers on a dark ground, never loud, always pretty. It carries the day beautifully and turns just as easily to evening, a piece with a little old-world romance about it.",same:1881}
 ];
 const WRITE_OWN="✎ Write my own…";
-const GARMENTS=PIECES.map(([fr,cat,col,names],i)=>({id:"p"+fr,n:i+1,fr,cat,col,names,desc:DESC[cat]}));
-const KEY="swg_photo_review_v3";
+const GARMENTS=PIECES.map((p,i)=>({id:"p"+p.f[0],n:i+1,frames:p.f,cat:p.cat,col:p.col,names:p.names,desc:p.desc,presame:p.same?("p"+p.same):null}));
+const KEY="swg_photo_review_v7";
 let state={}; try{state=JSON.parse(localStorage.getItem(KEY)||"{}");}catch(e){state={};}
 const cards=document.getElementById('cards');
+const N=GARMENTS.length;
+function pieceById(id){return GARMENTS.find(x=>x.id===id);}
 
 GARMENTS.forEach(g=>{
-  const s=state[g.id]||{name:g.names[0],custom:false,desc:g.desc,cat:g.cat,col:g.col,decision:null,note:"",sameAs:null};
+  const s=state[g.id]||{name:g.names[0],custom:false,desc:g.desc,cat:g.cat,col:g.col,decision:null,note:"",sameAs:g.presame||null};
   state[g.id]=s;
   const card=document.createElement('section'); card.className='card'; card.id='c-'+g.id;
   const opts=[...g.names,WRITE_OWN].map(nm=>`<option ${nm===s.name||(nm===WRITE_OWN&&s.custom)?'selected':''}>${nm}</option>`).join('');
+  const shots=g.frames.map((fr,j)=>`<div class="shot"><img src="${PHOTOS}IMG_${fr}.jpg" alt="${g.names[0]} ${j===0?'front':'back'}" loading="lazy" data-piece="${g.id}" data-idx="${j}"><div class="shot-lbl">${g.frames.length>1?(j===0?'Front':'Back'):' '}</div></div>`).join('');
   card.innerHTML=`
-    <div class="card-top"><span class="piece-no">Piece ${g.n}</span><span class="ref" id="ref-${g.id}">of 25 · IMG ${g.fr}</span></div>
-    <div class="photo-wrap"><img src="${PHOTOS}IMG_${g.fr}.jpg" alt="Piece ${g.n}" loading="lazy" data-fr="${g.fr}"></div>
+    <div class="card-top"><span class="piece-no">Piece ${g.n}</span><span class="ref" id="ref-${g.id}">of ${N} · IMG ${g.frames.join(', ')}</span></div>
+    <div class="strip">${shots}</div>
     <div class="fields">
       <label class="fl">Name this piece</label>
       <select class="namesel" data-g="${g.id}">${opts}</select>
@@ -171,9 +161,8 @@ GARMENTS.forEach(g=>{
       <textarea class="descbox" data-g="${g.id}" placeholder="In your words…">${s.desc||''}</textarea>
       <div class="hint">A starting point — rewrite it so it sounds like you.</div>
       <div class="counter" id="cnt-${g.id}"></div>
-      <div class="row2">
-        <div><label class="fl">Colour</label><input type="text" class="colbox" data-g="${g.id}" value="${(s.col||'').replace(/"/g,'&quot;')}" placeholder="e.g. Black"></div>
-      </div>
+      <label class="fl">Colour</label>
+      <input type="text" class="colbox" data-g="${g.id}" value="${(s.col||'').replace(/"/g,'&quot;')}" placeholder="e.g. Black">
       <label class="fl">Category</label>
       <div class="cats">${CATS.map(c=>`<button class="cat ${c===s.cat?'on':''}" data-g="${g.id}" data-c="${c}">${c}</button>`).join('')}</div>
       <label class="fl">Same style, different colour?</label>
@@ -193,8 +182,7 @@ GARMENTS.forEach(g=>{
   cards.appendChild(card); applyDecision(g.id); updateCounter(g.id);
 });
 
-// ---- colourway link: "same style, different colour" ----
-function pieceById(id){return GARMENTS.find(x=>x.id===id);}
+// colourway picker
 GARMENTS.forEach(g=>{
   const sel=document.querySelector(`.samesel[data-g="${g.id}"]`);
   let html='<option value="">— It\'s its own style —</option>';
@@ -205,13 +193,13 @@ function applyLink(gid){
   const s=state[gid],note=document.getElementById('ln-'+gid),ref=document.getElementById('ref-'+gid),g=pieceById(gid);
   if(s.sameAs){const m=pieceById(s.sameAs);
     note.innerHTML=`↳ Colour variant of <b>Piece ${m.n}</b> — shares that piece's name &amp; description; just set this one's colour.`;
-    ref.textContent='↳ colour of Piece '+m.n+' · IMG '+g.fr;
-  }else{note.innerHTML='If this is a piece you\'ve already named in another colour, point it there — it becomes one product with colour options.';ref.textContent='of 25 · IMG '+g.fr;}
+    ref.textContent='↳ colour of Piece '+m.n+' · IMG '+g.frames.join(', ');
+  }else{note.innerHTML='If this is a piece you\'ve already named in another colour, point it there — it becomes one product with colour options.';ref.textContent='of '+N+' · IMG '+g.frames.join(', ');}
 }
 
 cards.addEventListener('click',e=>{
-  const img=e.target.closest('img[data-fr]');
-  if(img){lbImg.src=PHOTOS+'IMG_'+img.dataset.fr+'.jpg';lb.classList.add('show');return;}
+  const img=e.target.closest('img[data-piece]');
+  if(img){openLB(img.dataset.piece,+img.dataset.idx);return;}
   const cat=e.target.closest('.cat');
   if(cat){state[cat.dataset.g].cat=cat.dataset.c;document.querySelectorAll(`.cat[data-g="${cat.dataset.g}"]`).forEach(b=>b.classList.toggle('on',b.dataset.c===cat.dataset.c));save();return;}
   const act=e.target.closest('.act');
@@ -242,18 +230,24 @@ function applyDecision(g){
 }
 function updateCounter(g){const n=(state[g].desc||'').length;const el=document.getElementById('cnt-'+g);el.textContent=n+' characters';el.className='counter'+(n>200?' over':(n>140?' warn':''));}
 function reviewed(){return GARMENTS.filter(g=>state[g.id].decision).length;}
-function progress(){const n=reviewed();document.getElementById('pfill').style.width=(n/25*100)+'%';document.getElementById('pcount').textContent=n+' of 25';document.getElementById('status').innerHTML='<b>'+n+'</b> of 25 reviewed';document.getElementById('submit').disabled=n===0;}
+function progress(){const n=reviewed();document.getElementById('pfill').style.width=(n/N*100)+'%';document.getElementById('pcount').textContent=n+' of '+N;document.getElementById('status').innerHTML='<b>'+n+'</b> of '+N+' reviewed';document.getElementById('submit').disabled=n===0;}
 function save(){localStorage.setItem(KEY,JSON.stringify(state));}
 
+// lightbox (cycles a piece's images)
 const lb=document.getElementById('lb'),lbImg=document.getElementById('lbImg');
+let lbFrames=[],lbIdx=0;
+function openLB(gid,idx){lbFrames=pieceById(gid).frames;lbIdx=idx;showLB();lb.classList.add('show');}
+function showLB(){lbImg.src=PHOTOS+'IMG_'+lbFrames[lbIdx]+'.jpg';}
 document.getElementById('lbClose').onclick=()=>lb.classList.remove('show');
+document.getElementById('lbPrev').onclick=(e)=>{e.stopPropagation();lbIdx=(lbIdx-1+lbFrames.length)%lbFrames.length;showLB();};
+document.getElementById('lbNext').onclick=(e)=>{e.stopPropagation();lbIdx=(lbIdx+1)%lbFrames.length;showLB();};
 lb.addEventListener('click',e=>{if(e.target===lb)lb.classList.remove('show');});
-document.addEventListener('keydown',e=>{if(e.key==='Escape')lb.classList.remove('show');});
+document.addEventListener('keydown',e=>{if(!lb.classList.contains('show'))return;if(e.key==='Escape')lb.classList.remove('show');if(e.key==='ArrowLeft')lbIdx=(lbIdx-1+lbFrames.length)%lbFrames.length,showLB();if(e.key==='ArrowRight')lbIdx=(lbIdx+1)%lbFrames.length,showLB();});
 
-// ---- export: readable + CSV (the product log / SKU seed) ----
+// ---- export ----
 function buildReadable(){
   const L=["STYLE WITH GULJANA — Julie's product review",""];const lab={approve:"APPROVED",reshoot:"RESHOOT",skip:"skip"};
-  GARMENTS.forEach(g=>{const s=state[g.id];let line=`Piece ${g.n} (IMG ${g.fr}): ${s.decision?lab[s.decision]:'— not reviewed —'}`;
+  GARMENTS.forEach(g=>{const s=state[g.id];let line=`Piece ${g.n} (IMG ${g.frames.join('/')}): ${s.decision?lab[s.decision]:'— not reviewed —'}`;
     if(s.decision){if(s.sameAs)line+=`\n   ↳ colour variant of Piece ${pieceById(rootId(g.id)).n} (shares its name & description)`;
       if(s.name)line+=`\n   name: ${s.name}`;if(s.col)line+=`\n   colour: ${s.col}`;if(s.cat)line+=`\n   category: ${s.cat}`;
       if(s.desc)line+=`\n   description: ${s.desc}`;if(s.decision==='reshoot'&&s.note)line+=`\n   reshoot note: ${s.note}`;}L.push(line);});
@@ -262,7 +256,7 @@ function buildReadable(){
 }
 function csvCell(v){v=String(v==null?"":v).replace(/"/g,'""');return /[",\n]/.test(v)?'"'+v+'"':v;}
 const CATCODE={Dresses:"DR",Tops:"TP",Bottoms:"BT",Sets:"ST",Outerwear:"OW",Accessories:"AC"};
-const COLCODE={Black:"BLK",Grey:"GRY",Olive:"OLV",Navy:"NVY","Black Floral":"FLR","Grey & Black":"GBK",Cream:"CRM",White:"WHT",Brown:"BRN",Burgundy:"BUR",Green:"GRN",Blue:"BLU",Red:"RED"};
+const COLCODE={Black:"BLK",Grey:"GRY",Taupe:"TPE",Champagne:"CHM",Olive:"OLV",Navy:"NVY",Blue:"BLU","Black Floral":"FLR",Unknown:"UNK",Cream:"CRM",White:"WHT",Brown:"BRN"};
 function colorCode(c){c=(c||"").trim();if(COLCODE[c])return COLCODE[c];return (c.replace(/[^A-Za-z]/g,'').toUpperCase().slice(0,3))||"XXX";}
 function rootId(gid){let s=state[gid],hops=0;while(s.sameAs&&hops<30){gid=s.sameAs;s=state[gid];hops++;}return gid;}
 function styleNumbers(){const map={};let n=0;
@@ -270,12 +264,12 @@ function styleNumbers(){const map={};let n=0;
   GARMENTS.forEach(g=>{if(state[g.id].sameAs)map[g.id]=map[rootId(g.id)]||'???';});return map;}
 function buildCSV(){
   const sn=styleNumbers();
-  const rows=[["Piece","Photo","Style#","SKU","Name","Colour","Category","Description","SameStyleAs","Status","ReshootNote"]];
+  const rows=[["Piece","Photos","Style#","SKU","Name","Colour","Category","Description","SameStyleAs","Status","ReshootNote"]];
   GARMENTS.forEach(g=>{const s=state[g.id],r=state[rootId(g.id)];
     const name=s.sameAs?(r.name||""):(s.name||""), desc=s.sameAs?(r.desc||""):(s.desc||""), catName=s.sameAs?(r.cat||""):(s.cat||"");
     const sku=`SWG-${CATCODE[catName]||"XX"}-${sn[g.id]||"???"}-${colorCode(s.col)}`;
     const same=s.sameAs?("Piece "+pieceById(rootId(g.id)).n):"";
-    rows.push([g.n,"IMG_"+g.fr,sn[g.id]||"",sku,name,s.col||"",catName,desc,same,s.decision||"",s.note||""]);
+    rows.push([g.n,g.frames.map(f=>"IMG_"+f).join(" "),sn[g.id]||"",sku,name,s.col||"",catName,desc,same,s.decision||"",s.note||""]);
   });
   return rows.map(r=>r.map(csvCell).join(",")).join("\n");
 }
@@ -292,7 +286,7 @@ document.getElementById('emailit').onclick=function(){
   const body=encodeURIComponent(buildReadable());
   window.location.href="mailto:jon@theconnectorsgroup.org?subject="+subj+"&body="+body;
 };
-document.getElementById('copy').onclick=function(){summary.select();summary.setSelectionRange(0,99999);const done=()=>{this.textContent='Copied ✓';this.classList.add('copied');setTimeout(()=>{this.textContent='Copy to clipboard';this.classList.remove('copied');},1800);};if(navigator.clipboard)navigator.clipboard.writeText(summary.value).then(done,()=>{document.execCommand('copy');done();});else{document.execCommand('copy');done();}};
+document.getElementById('copy').onclick=function(){summary.select();summary.setSelectionRange(0,99999);const done=()=>{this.textContent='Copied ✓';this.classList.add('copied');setTimeout(()=>{this.textContent='Copy instead';this.classList.remove('copied');},1800);};if(navigator.clipboard)navigator.clipboard.writeText(summary.value).then(done,()=>{document.execCommand('copy');done();});else{document.execCommand('copy');done();}};
 progress();
 </script>
 </body>
